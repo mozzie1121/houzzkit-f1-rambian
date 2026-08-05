@@ -45,7 +45,7 @@ The Houzzkit F1 board is supported on the ophub mainline 6.18.y kernel
 | RTC (hym8563) | OK |
 | GPU (panfrost) | OK - mali-g52 initialized |
 | System LED (GPIO0_C2) | OK - heartbeat |
-| NPU | Node present and enabled; **requires the rknpu driver** which the stock ophub 6.18 kernel does not ship - use the 6.1 BSP kernel for NPU |
+| NPU | Node present and enabled, but the unifreq/ophub 6.18 kernel has no rknpu driver (not even in the source tree), so no `/dev/dri/renderD129` - use the 6.1 BSP kernel for NPU |
 
 Known kernel-level limitation: UART7/UART9 cannot register because the ophub
 6.18 kernel's 8250 port count is limited (UART0-4 work, including UART3 for
