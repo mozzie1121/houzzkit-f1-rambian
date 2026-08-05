@@ -34,7 +34,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout upstream build system
         uses: actions/checkout@v4
@@ -50,7 +50,7 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get -y install $(curl -fsSL https://ophub.org/ubuntu2204-build-armbian-depends)
+          sudo apt-get -y install $(curl -fsSL https://ophub.org/ubuntu2404-build-armbian-depends)
 
       - name: Resolve base Armbian image URL (rock-3a)
         run: |
