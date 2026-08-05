@@ -31,9 +31,19 @@ new, n = pattern.subn(r'\1"okay"', data, count=1)
 if n != 1:
     raise SystemExit("ERROR: serial@fe660000 node not found or already enabled")
 
+# The ophub rk35xx kernel rknpu driver (v0.9.x) requests its IRQ by name
+# ("npu_irq"). The HAOS vendor dtb lacks interrupt-names, so add it.
+npupat = re.compile(
+    r'(npu@fde40000 \{\n.*?\n\t\tinterrupts = <[^>]+>;)',
+    re.S,
+)
+new, n2 = npupat.subn(r'\1\n\t\tinterrupt-names = "npu_irq";', new, count=1)
+if n2 != 1:
+    raise SystemExit("ERROR: npu@fde40000 interrupts property not found")
+
 with open(path, "w", encoding="utf-8") as f:
     f.write(new)
-print("patched serial@fe660000 -> okay")
+print("patched serial@fe660000 -> okay, npu interrupt-names -> npu_irq")
 EOF
 
 dtc -I dts -O dtb -b 0 -@ "${TMP}" -o "${OUT}"
