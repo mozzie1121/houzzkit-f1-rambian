@@ -26,6 +26,31 @@ The resulting dtb contains the expected nodes: UART0/2/3/4/7/9, dual RGMII
 (gmac0/gmac1), eMMC + SD, USB2/USB3, PCIe2x1/3x2, HDMI, RK809 PMIC,
 RTC (hym8563), GPU and NPU (`rknpu` with `interrupt-names = "npu_irq"`).
 
+## Mainline kernel support
+
+The Houzzkit F1 board is supported on the ophub mainline 6.18.y kernel
+(`armbian-update -u stable -k 6.18`), verified on device:
+
+| Function | Status |
+| --- | --- |
+| Kernel | 6.18.42-ophub |
+| Ethernet (dual RGMII, YT8531) | OK - 1Gbps full duplex, both PHYs detected |
+| eMMC / SD | OK |
+| USB2 / USB3 | OK |
+| PCIe2x1 (M.2 WiFi) | OK - RTL8822CE link up |
+| PCIe3x2 (M.2 SSD) | OK - host bridge up (no SSD fitted during test) |
+| WiFi / Bluetooth | OK - RTL8822CE scan OK, hci0 present |
+| HDMI | OK - DRM node present (no display connected during test) |
+| RK809 PMIC / audio (HDMI + analog) | OK |
+| RTC (hym8563) | OK |
+| GPU (panfrost) | OK - mali-g52 initialized |
+| System LED (GPIO0_C2) | OK - heartbeat |
+| NPU | Node present and enabled; **requires the rknpu driver** which the stock ophub 6.18 kernel does not ship - use the 6.1 BSP kernel for NPU |
+
+Known kernel-level limitation: UART7/UART9 cannot register because the ophub
+6.18 kernel's 8250 port count is limited (UART0-4 work, including UART3 for
+the Zigbee gateway).
+
 ## Notes
 
 - The source depends on `rk3568-ip.dtsi` (and the vpu/gpu/npu/crypto dtsi

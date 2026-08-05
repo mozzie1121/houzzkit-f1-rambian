@@ -622,8 +622,6 @@
 };
 
 &pcie3x2 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pcie30x2m1_pins>;
 	reset-gpios = <&gpio4 RK_PC4 GPIO_ACTIVE_HIGH>;
 	vpcie3v3-supply = <&pcie30_3v3>;
 	status = "okay";
