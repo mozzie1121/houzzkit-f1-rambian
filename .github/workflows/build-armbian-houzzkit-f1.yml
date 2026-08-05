@@ -7,6 +7,9 @@
 #
 name: Build Armbian for Houzzkit F1
 
+permissions:
+  contents: write
+
 on:
   workflow_dispatch:
     inputs:
