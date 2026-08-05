@@ -78,7 +78,7 @@ bootloader 区（`skip_mb` + `write_board_bootloader` 仅写系统分区）。
 | 阶段 | 内容 | 状态 |
 | --- | --- | --- |
 | M0 | 立项：方案文档 + 仓库骨架 + 云工作流草稿 | 进行中 |
-| M1 | 内核/设备树：提取并验证 `rk3568-jl-rm01.dtb`，确认 rk35xx 内核可启动；补 NPU/Zigbee/网卡配置 | 未开始 |
+| M1 | 内核/设备树：dtb 已放入 overlay（uart3m1 底 + uart2 控制台开启）；待验证 rk35xx 内核可启动；补 NPU/网卡配置 | 部分完成 |
 | M2 | U-Boot：验证 v17 直接启动 Armbian；确定 A/B 方案 | 未开始 |
 | M3 | 设备接入：model_database 行（r232）+ different-files 文件已就绪 | 草稿完成 |
 | M4 | 云打包：工作流跑通，产出 img.gz | 未开始 |
