@@ -248,6 +248,8 @@
 	clock_in_out = "input";
 	phy-handle = <&rgmii_phy0>;
 	phy-mode = "rgmii";
+	snps,reset-delays-us = <0 20000 100000>;
+	snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
 	tx_delay = <0x3c>;
 	rx_delay = <0x2f>;
 	pinctrl-names = "default";
@@ -255,7 +257,8 @@
 		     &gmac0_tx_bus2
 		     &gmac0_rx_bus2
 		     &gmac0_rgmii_clk
-		     &gmac0_rgmii_bus>;
+		     &gmac0_rgmii_bus
+		     &gmac0_clkinout>;
 	status = "okay";
 };
 
@@ -263,11 +266,6 @@
 	rgmii_phy0: ethernet-phy@0 {
 		compatible = "ethernet-phy-ieee802.3-c22";
 		reg = <0x0>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&gmac0_phy_rst>;
-		reset-assert-us = <20000>;
-		reset-deassert-us = <100000>;
-		reset-gpios = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
 	};
 };
 
@@ -277,6 +275,8 @@
 	clock_in_out = "input";
 	phy-handle = <&rgmii_phy1>;
 	phy-mode = "rgmii";
+	snps,reset-delays-us = <0 20000 100000>;
+	snps,reset-gpio = <&gpio3 RK_PB0 GPIO_ACTIVE_LOW>;
 	tx_delay = <0x4f>;
 	rx_delay = <0x26>;
 	pinctrl-names = "default";
@@ -284,7 +284,8 @@
 		     &gmac1m1_tx_bus2
 		     &gmac1m1_rx_bus2
 		     &gmac1m1_rgmii_clk
-		     &gmac1m1_rgmii_bus>;
+		     &gmac1m1_rgmii_bus
+		     &gmac1m1_clkinout>;
 	status = "okay";
 };
 
@@ -292,16 +293,12 @@
 	rgmii_phy1: ethernet-phy@0 {
 		compatible = "ethernet-phy-ieee802.3-c22";
 		reg = <0x0>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&gmac1_phy_rst>;
-		reset-assert-us = <20000>;
-		reset-deassert-us = <100000>;
-		reset-gpios = <&gpio3 RK_PB0 GPIO_ACTIVE_LOW>;
 	};
 };
 
 &gpu {
 	mali-supply = <&vdd_gpu>;
+	/delete-property/ operating-points-v2;
 	status = "okay";
 };
 
@@ -866,16 +863,6 @@
 };
 
 &pinctrl {
-	ethernet {
-		gmac0_phy_rst: gmac0-phy-rst {
-			rockchip,pins = <3 RK_PB7 RK_FUNC_GPIO &pcfg_pull_none>;
-		};
-
-		gmac1_phy_rst: gmac1-phy-rst {
-			rockchip,pins = <3 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>;
-		};
-	};
-
 	fan {
 		vcc5v0_fan_en: vcc5v0-fan-en {
 			rockchip,pins = <0 RK_PD6 RK_FUNC_GPIO &pcfg_pull_none>;
