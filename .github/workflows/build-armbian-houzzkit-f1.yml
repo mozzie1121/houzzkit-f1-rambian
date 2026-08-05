@@ -97,6 +97,5 @@ jobs:
         with:
           files: |
             upstream/build/output/images/*.img.gz
-            upstream/build/output/images/*.img.xz
           tag_name: houzzkit-f1-${{ github.event.inputs.set_release }}
           draft: true
