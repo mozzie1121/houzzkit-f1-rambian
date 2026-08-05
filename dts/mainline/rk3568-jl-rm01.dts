@@ -24,8 +24,8 @@
 	compatible = "rockchip,rk3568-rzw03", "rockchip,rk3568";
 
 	aliases {
-		ethernet0 = &gmac1;
-		ethernet1 = &gmac0;
+		ethernet0 = &gmac0;
+		ethernet1 = &gmac1;
 		mmc0 = &sdhci;
 		mmc1 = &sdmmc0;
 		mmc2 = &sdmmc2;
@@ -253,6 +253,8 @@
 	rgmii_phy0: ethernet-phy@0 {
 		compatible = "ethernet-phy-ieee802.3-c22";
 		reg = <0x0>;
+		motorcomm,led0-triggers = "link-1000", "activity";
+		motorcomm,led1-triggers = "link-1000", "activity";
 	};
 };
 
@@ -281,6 +283,8 @@
 	rgmii_phy1: ethernet-phy@0 {
 		compatible = "ethernet-phy-ieee802.3-c22";
 		reg = <0x0>;
+		motorcomm,led0-triggers = "link-1000", "activity";
+		motorcomm,led1-triggers = "link-1000", "activity";
 	};
 };
 
