@@ -70,7 +70,7 @@ jobs:
             fi
             echo "ARMBIAN_URL=${base}${file}" >> "${GITHUB_ENV}"
           fi
-          echo "Base image: ${ARMBIAN_URL}"
+          echo "Resolved base image for release ${release:-custom}."
 
       - name: Apply houzzkit-f1 device overlay
         run: |
