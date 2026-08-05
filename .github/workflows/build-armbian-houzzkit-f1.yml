@@ -1,0 +1,41 @@
+# Cloud build for Houzzkit F1 (RK3568-JL-RM01)
+# Based on upstream: build-armbian-using-releases-files.yml
+
+name: Build Armbian for Houzzkit F1
+
+on:
+  workflow_dispatch:
+    inputs:
+      set_release:
+        description: "Select OS Release (trixie/bookworm/noble/resolute)."
+        required: false
+        default: "bookworm"
+      kernel_version:
+        description: "Kernel version or tag suffix (e.g. 6.1.y, 6.6.y, stable)."
+        required: false
+        default: "rk35xx/6.1.y"
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Armbian for houzzkit-f1
+        uses: ./
+        with:
+          armbian_board: houzzkit-f1
+          set_release: ${{ github.event.inputs.set_release }}
+          kernel_repo: ophub/kernel
+          kernel_version: ${{ github.event.inputs.kernel_version }}
+          uboot_repo: ophub/u-boot
+
+      - name: Upload image to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            rebuild/*.img.gz
+            rebuild/*.img.xz
+          tag_name: houzzkit-f1-${{ github.event.inputs.set_release }}
+          draft: true
