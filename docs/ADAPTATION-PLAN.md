@@ -62,9 +62,16 @@ bootloader 区（`skip_mb` + `write_board_bootloader` 仅写系统分区）。
 
 ### 3.5 云构建
 
-在 `.github/workflows/build-armbian-using-releases-files.yml` 的
-`armbian_board` 选项加入 `houzzkit-f1`，并为本项目保留一个专用工作流
-`build-armbian-houzzkit-f1.yml`（默认 `-b houzzkit-f1`），产物上传 Releases。
+采用 **overlay 云构建**（本仓库 = 轻量设备层）：
+
+1. GitHub Actions 先 checkout 上游 `amlogic-s9xxx-armbian`。
+2. `scripts/apply-overlay.sh` 把 `overlay/` 合并进上游树
+   （different-files、platform-files、model_database 行）。
+3. 调用上游 composite action，`-b houzzkit-f1` 构建。
+4. 产物上传 Releases。
+
+这样无需把整个上游 fork 进来，也不依赖上游仓库先合并我们的设备。
+后续若上游合入设备支持，可切换到纯上游 workflow。
 
 ## 4. 里程碑
 
@@ -73,7 +80,7 @@ bootloader 区（`skip_mb` + `write_board_bootloader` 仅写系统分区）。
 | M0 | 立项：方案文档 + 仓库骨架 + 云工作流草稿 | 进行中 |
 | M1 | 内核/设备树：提取并验证 `rk3568-jl-rm01.dtb`，确认 rk35xx 内核可启动；补 NPU/Zigbee/网卡配置 | 未开始 |
 | M2 | U-Boot：验证 v17 直接启动 Armbian；确定 A/B 方案 | 未开始 |
-| M3 | 设备接入：model_database 行 + different-files 文件 | 未开始 |
+| M3 | 设备接入：model_database 行（r232）+ different-files 文件已就绪 | 草稿完成 |
 | M4 | 云打包：工作流跑通，产出 img.gz | 未开始 |
 | M5 | 实机验证：TF/USB 启动、eMMC 安装、外设 | 未开始 |
 
