@@ -64,10 +64,12 @@ bootloader 区（`skip_mb` + `write_board_bootloader` 仅写系统分区）。
 
 采用 **overlay 云构建**（本仓库 = 轻量设备层）：
 
-1. GitHub Actions 先 checkout 上游 `amlogic-s9xxx-armbian`。
-2. `scripts/apply-overlay.sh` 把 `overlay/` 合并进上游树
+1. 从 Armbian 官方下载 rock-3a（RK3568）底包（默认 noble vendor minimal）
+   作为 rootfs 基础，随后由 rebuild 替换内核/dtbs/u-boot 为 houzzkit-f1 配置。
+2. GitHub Actions checkout 上游 `amlogic-s9xxx-armbian`，
+   `scripts/apply-overlay.sh` 把 `overlay/` 合并进上游树
    （different-files、platform-files、model_database 行）。
-3. 调用上游 composite action，`-b houzzkit-f1` 构建。
+3. 调用上游 composite action（`armbian_path` 传底包 URL），`-b houzzkit-f1` 构建。
 4. 产物上传 Releases。
 
 这样无需把整个上游 fork 进来，也不依赖上游仓库先合并我们的设备。

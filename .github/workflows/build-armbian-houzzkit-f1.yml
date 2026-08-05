@@ -13,13 +13,16 @@ on:
       set_release:
         description: "Select OS Release."
         required: false
-        default: "bookworm"
+        default: "noble"
         type: choice
         options:
-          - bookworm
-          - trixie
           - noble
+          - trixie
           - resolute
+      armbian_url:
+        description: "Base Armbian image URL (rock-3a archive). Empty = auto resolve."
+        required: false
+        default: ""
       kernel_usage:
         description: "Kernel tag suffix (rk35xx / stable)."
         required: false
@@ -49,22 +52,25 @@ jobs:
           sudo apt-get update
           sudo apt-get -y install $(curl -fsSL https://ophub.org/ubuntu2204-build-armbian-depends)
 
-      - name: Download base Armbian image from upstream releases
+      - name: Resolve base Armbian image URL (rock-3a)
         run: |
           set -euo pipefail
-          build_path="${GITHUB_WORKSPACE}/upstream/build/output/images"
-          mkdir -p "${build_path}"
-          release="${{ github.event.inputs.set_release }}"
-          asset_name=$(curl -fsSL \
-            "https://api.github.com/repos/ophub/amlogic-s9xxx-armbian/releases?per_page=20" | \
-            jq -r '[.[].assets[].name] | map(select(test("^Armbian_'"${release}"'_arm64_.*\\.img\\.gz$"))) | .[0]')
-          if [[ -z "${asset_name}" || "${asset_name}" == "null" ]]; then
-            echo "Error: no Armbian ${release} base image found in ophub releases."
-            exit 1
+          if [[ -n "${{ github.event.inputs.armbian_url }}" ]]; then
+            echo "ARMBIAN_URL=${{ github.event.inputs.armbian_url }}" >> "${GITHUB_ENV}"
+          else
+            release="${{ github.event.inputs.set_release }}"
+            base="https://dl.armbian.com/rock-3a/archive/"
+            listing="$(curl -fsSL "${base}")"
+            # Prefer the vendor (BSP 6.1) minimal image, fall back to current.
+            file="$(echo "${listing}" | grep -oE "Armbian_[^\"]*_${release}_vendor_[^\"]*_minimal\\.img\\.xz" | head -n 1)"
+            [[ -z "${file}" ]] && file="$(echo "${listing}" | grep -oE "Armbian_[^\"]*_${release}_current_[^\"]*_minimal\\.img\\.xz" | head -n 1)"
+            if [[ -z "${file}" ]]; then
+              echo "Error: no Armbian ${release} base image for rock-3a."
+              exit 1
+            fi
+            echo "ARMBIAN_URL=${base}${file}" >> "${GITHUB_ENV}"
           fi
-          echo "Downloading: ${asset_name}"
-          curl -fsSL -o "${build_path}/${asset_name}" \
-            "https://github.com/ophub/amlogic-s9xxx-armbian/releases/latest/download/${asset_name}"
+          echo "Base image: ${ARMBIAN_URL}"
 
       - name: Apply houzzkit-f1 device overlay
         run: |
@@ -75,6 +81,7 @@ jobs:
       - name: Rebuild Armbian for houzzkit-f1
         uses: ./upstream
         with:
+          armbian_path: ${{ env.ARMBIAN_URL }}
           armbian_board: houzzkit-f1
           kernel_repo: ophub/kernel
           kernel_usage: ${{ github.event.inputs.kernel_usage }}
